@@ -31,14 +31,22 @@ class SongIndex:
         start = time.time()
         songs = []
         seen_stems: set[str] = set()  # Track CDG+MP3 pairs
+        self.errors: list[str] = []
+        self.folders_scanned: list[str] = []
+        self.total_files_seen: int = 0
 
         ext_set = {e.lower() for e in extensions}
 
         for folder in folders:
+            # Normalize path separators for Windows
+            folder = os.path.normpath(folder.strip())
             if not os.path.isdir(folder):
+                self.errors.append(f"Folder not found: {folder}")
                 continue
+            self.folders_scanned.append(folder)
             for root, _dirs, files in os.walk(folder):
                 for fname in files:
+                    self.total_files_seen += 1
                     ext = os.path.splitext(fname)[1].lower()
                     if ext not in ext_set:
                         continue

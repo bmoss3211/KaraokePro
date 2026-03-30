@@ -387,7 +387,26 @@ async function saveSettings() {
 
     // Rescan songs with new folders
     const scanResult = await API.post('/api/songs/rescan');
-    showToast(`Settings saved. ${scanResult.count} songs indexed in ${scanResult.scan_time}s`);
+
+    // Show detailed results
+    let msg = `${scanResult.count} songs indexed in ${scanResult.scan_time}s`;
+    if (scanResult.errors && scanResult.errors.length > 0) {
+        msg += `\n\nErrors:\n- ${scanResult.errors.join('\n- ')}`;
+    }
+    if (scanResult.count === 0 && scanResult.total_files_seen > 0) {
+        msg += `\n\n${scanResult.total_files_seen} files found but none matched extensions: ${(scanResult.extensions || []).join(', ')}`;
+    }
+    if (scanResult.count === 0 && scanResult.total_files_seen === 0 && (!scanResult.errors || scanResult.errors.length === 0)) {
+        msg += `\n\nFolders scanned but empty: ${(scanResult.folders_scanned || []).join(', ')}`;
+    }
+
+    if (scanResult.errors && scanResult.errors.length > 0) {
+        alert('Scan Results:\n\n' + msg);
+    } else {
+        showToast(`Settings saved. ${scanResult.count} songs indexed`);
+    }
+
+    document.getElementById('song-count-display').textContent = `${scanResult.count} songs indexed`;
     closeSettings();
 }
 

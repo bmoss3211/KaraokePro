@@ -17,15 +17,27 @@ def song_stats():
         "count": song_index.count,
         "scan_time": round(song_index.scan_time, 2),
         "last_scan": song_index.last_scan,
+        "folders_scanned": getattr(song_index, 'folders_scanned', []),
+        "total_files_seen": getattr(song_index, 'total_files_seen', 0),
+        "errors": getattr(song_index, 'errors', []),
+        "sample_songs": [
+            {"artist": s.artist, "title": s.title, "file_type": s.file_type}
+            for s in song_index.songs[:5]
+        ] if song_index.songs else [],
     }
 
 
 @router.post("/songs/rescan")
 def rescan_songs():
     config = load_config()
-    if config["song_folders"]:
-        song_index.scan(config["song_folders"], config["song_extensions"])
+    if not config["song_folders"]:
+        return {"count": 0, "scan_time": 0, "errors": ["No song folders configured"]}
+    song_index.scan(config["song_folders"], config["song_extensions"])
     return {
         "count": song_index.count,
         "scan_time": round(song_index.scan_time, 2),
+        "folders_scanned": song_index.folders_scanned,
+        "total_files_seen": song_index.total_files_seen,
+        "extensions": config["song_extensions"],
+        "errors": song_index.errors,
     }
