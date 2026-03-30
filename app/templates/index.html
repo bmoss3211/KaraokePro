@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KaraokePro</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+    <h1>KaraokePro</h1>
+    <div id="header-stats" class="header-stats"></div>
+    <div class="header-actions">
+        <button class="btn-icon" onclick="openSettings()" title="Settings">&#9881;</button>
+    </div>
+</div>
+
+<!-- Session Bar -->
+<div id="session-bar" class="session-bar inactive">
+    <span style="color:var(--red)">No active session</span>
+    <button class="btn btn-success" onclick="startSession()">Start Session</button>
+</div>
+
+<!-- Main Layout -->
+<div class="main-layout">
+
+    <!-- Left: Queue -->
+    <div class="queue-panel">
+        <!-- Tabs -->
+        <div class="tab-bar">
+            <button class="tab active" data-tab="queue" onclick="switchTab('queue')">Queue</button>
+            <button class="tab" data-tab="history" onclick="switchTab('history')">Tonight's History</button>
+        </div>
+
+        <!-- Queue Tab -->
+        <div id="tab-queue" class="tab-content" style="display:block">
+            <div id="now-singing" class="now-singing-empty">
+                <p>No singers in queue yet</p>
+            </div>
+            <h2>Up Next</h2>
+            <div id="queue-list" class="queue-list">
+                <div class="empty-state">
+                    <div class="icon">&#127908;</div>
+                    <p>Queue is empty — add singers from the panel on the right</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Tab -->
+        <div id="tab-history" class="tab-content" style="display:none">
+            <h2>Singer History</h2>
+            <div id="history-content">
+                <div class="empty-state"><p>No singers yet tonight</p></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right: Add Singer Panel -->
+    <div class="add-panel">
+        <h2>Add Singer</h2>
+
+        <!-- Singer Name -->
+        <div class="form-group">
+            <label>Singer Name</label>
+            <input type="text" id="singer-name" placeholder="Enter name..." autocomplete="off">
+        </div>
+
+        <!-- Song Search -->
+        <div class="form-group">
+            <label>Search Song</label>
+            <input type="text" id="song-search" placeholder="Type to search songs..." autocomplete="off">
+            <div id="search-results" class="search-results"></div>
+        </div>
+
+        <!-- Selected Song -->
+        <div id="selected-song" style="display:none;background:var(--bg-card);border:1px solid var(--green);border-radius:8px;padding:12px;margin-bottom:16px"></div>
+
+        <!-- Tip -->
+        <div class="form-group">
+            <label>Tip</label>
+            <div id="tip-buttons" class="tip-buttons">
+                <button class="tip-btn active" onclick="selectTip(0)">None</button>
+                <button class="tip-btn" onclick="selectTip(5)">$5</button>
+                <button class="tip-btn" onclick="selectTip(10)">$10</button>
+                <button class="tip-btn" onclick="selectTip(20)">$20</button>
+                <button class="tip-btn" onclick="customTip()">Custom</button>
+            </div>
+        </div>
+
+        <!-- Add Button -->
+        <button class="btn btn-primary" onclick="addSinger()" style="width:100%;padding:16px;font-size:1.1rem;margin-top:8px">
+            Add to Queue
+        </button>
+        <div style="text-align:center;margin-top:8px;color:var(--text-secondary);font-size:0.8rem">
+            Ctrl+Enter to quick add
+        </div>
+    </div>
+
+</div>
+
+<!-- Settings Modal -->
+<div id="settings-modal" class="modal-overlay">
+    <div class="modal">
+        <h2>Settings</h2>
+
+        <div class="form-group">
+            <label>Song Folders (one per line)</label>
+            <textarea id="setting-folders" rows="3" style="width:100%;padding:12px;background:var(--bg-primary);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:0.95rem;resize:vertical" placeholder="E:\Karaoke Songs\"></textarea>
+            <div id="song-count-display" style="font-size:0.8rem;color:var(--text-secondary);margin-top:4px">0 songs indexed</div>
+        </div>
+
+        <div class="form-group">
+            <label>Tip Weight (higher = tips matter more)</label>
+            <input type="number" id="setting-tip-weight" value="50" min="1" max="500">
+        </div>
+
+        <div class="form-group">
+            <label>Venue Name</label>
+            <input type="text" id="setting-venue" value="Chaplins">
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn btn-small" onclick="closeSettings()" style="background:var(--border);color:var(--text-primary)">Cancel</button>
+            <button class="btn btn-primary btn-small" onclick="saveSettings()">Save & Rescan</button>
+        </div>
+    </div>
+</div>
+
+<script src="/static/js/app.js"></script>
+</body>
+</html>
